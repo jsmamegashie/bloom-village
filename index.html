@@ -400,6 +400,7 @@ iframe.inline-media{background:#fff}
 </nav>
 <div class="ui card more" id="moreMenu" hidden>
   <button class="pill" id="dramaBtn" type="button">Drama</button>
+  <button class="pill" id="installBtn" type="button" hidden style="background:#7b2d42;color:#fff">Install app</button>
   <button class="pill" id="pushBtn" type="button" hidden>Phone alerts</button>
   <button class="pill" id="msgBtn" type="button" hidden>Messages</button>
   <button class="pill" id="feedToggle" aria-pressed="false">Activity</button>
@@ -3211,6 +3212,16 @@ if (window.BLOOM_STANDALONE) {
     store.collection('messages').orderBy('createdAt', 'desc').limit(60).onSnapshot(s => { MSGS = s.docs.map(d => Object.assign({ id: d.id }, d.data())); const n = MSGS.filter(m => !m.read).length; mb.textContent = n ? `Messages (${n})` : 'Messages'; if (!mc.hidden) showMsgs(); }, () => { });
     if ((location.hash || '') === '#msg') openMsgs(); })();
   if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open === 'msg') openMsgs(); });
+}
+
+/* ---------- install button (Android Chrome and Samsung Internet) ---------- */
+if (window.BLOOM_STANDALONE) {
+  const ib = document.getElementById('installBtn');
+  const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  const show = () => { if (standalone || !window.__bip) return; ib.hidden = false; toast('Bloom Village can be installed. Tap More, then Install app.'); };
+  window.addEventListener('bloom-installable', show); show();
+  ib.addEventListener('click', async () => { if (!window.__bip) { toast('Use your browser menu, then Add page to, then Home screen.'); return; } window.__bip.prompt(); const c = await window.__bip.userChoice; window.__bip = null; ib.hidden = true; if (c.outcome === 'accepted') toast('Installed. Open Bloom Village from your home screen.'); });
+  if (!standalone) setTimeout(() => { if (!window.__bip && !sessionStorage.getItem('bvHint')) { try { sessionStorage.setItem('bvHint', '1'); } catch (e) { } } }, 5000);
 }
 </script>
 

@@ -170,5 +170,6 @@
   window.claude = { use: async name => { await gate(); return caps[name] || null; } };
 
   /* ---------- PWA ---------- */
-  if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => { }));
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { });
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); window.__bip = e; window.dispatchEvent(new Event('bloom-installable')); });
 })();
