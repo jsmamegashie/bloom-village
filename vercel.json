@@ -1,3 +1,16 @@
-{ "buildCommand": "node build.js", "outputDirectory": "public", "framework": null,
-  "functions": { "api/import.js": { "includeFiles": "api/_seed.enc.json" } },
-  "headers": [ { "source": "/sw.js", "headers": [ { "key": "Cache-Control", "value": "no-cache" } ] } ] }
+{
+ "buildCommand": "node build.js",
+ "outputDirectory": "public",
+ "framework": null,
+ "headers": [
+  {
+   "source": "/sw.js",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "no-cache"
+    }
+   ]
+  }
+ ]
+}
