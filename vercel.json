@@ -12,5 +12,56 @@
     }
    ]
   }
- ]
+ ],
+ "crons": [
+  {
+   "path": "/api/cron?job=susu",
+   "schedule": "47 17 * * 5"
+  },
+  {
+   "path": "/api/cron?job=prayer",
+   "schedule": "43 23 * * *"
+  },
+  {
+   "path": "/api/cron?job=nudge",
+   "schedule": "31 5 * * 1-5"
+  },
+  {
+   "path": "/api/cron?job=weekend",
+   "schedule": "1 7 * * 0,6"
+  },
+  {
+   "path": "/api/cron?job=scorecard",
+   "schedule": "13 19 * * 0"
+  },
+  {
+   "path": "/api/cron?job=retro",
+   "schedule": "23 15 * * 5"
+  },
+  {
+   "path": "/api/cron?job=celebrations",
+   "schedule": "59 8 15 * *"
+  },
+  {
+   "path": "/api/cron?job=prospecting",
+   "schedule": "41 8 * * 1"
+  },
+  {
+   "path": "/api/cron?job=sika",
+   "schedule": "13 19 28 * *"
+  },
+  {
+   "path": "/api/cron?job=case",
+   "schedule": "37 12 * * 1-5"
+  },
+  {
+   "path": "/api/cron?job=tools",
+   "schedule": "23 18 * * 1,4"
+  }
+ ],
+ "functions": {
+  "api/cron.js": {
+   "maxDuration": 300
+  }
+ }
 }

@@ -401,6 +401,7 @@ iframe.inline-media{background:#fff}
 <div class="ui card more" id="moreMenu" hidden>
   <button class="pill" id="dramaBtn" type="button">Drama</button>
   <button class="pill" id="pushBtn" type="button" hidden>Phone alerts</button>
+  <button class="pill" id="msgBtn" type="button" hidden>Messages</button>
   <button class="pill" id="feedToggle" aria-pressed="false">Activity</button>
   <button class="pill" id="rain" aria-pressed="false">Rain</button>
 
@@ -460,6 +461,10 @@ iframe.inline-media{background:#fff}
     <select id="addStatus" aria-label="Status"></select>
     <button type="submit">Add to board</button>
   </form>
+</aside>
+<aside class="ui card board" id="msgCard" hidden aria-label="Messages from your team">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2>Messages from your team</h2><button class="close" id="closeMsg" style="position:static" aria-label="Close">×</button></div>
+  <div id="msgList" style="display:grid;gap:8px;overflow:auto;min-height:0"></div>
 </aside>
 <div class="toast" id="toast" hidden></div>
 <div class="drama-banner" id="drama" role="status" aria-live="polite"></div>
@@ -3188,9 +3193,24 @@ if (window.BLOOM_STANDALONE) {
     } catch (e) { toast('Could not turn on alerts on this device.'); }
   });
   const go = (location.hash || '').slice(1);
-  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open) setTimeout(() => document.getElementById('workBtn')?.click(), 300); });
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open && e.data.open !== 'msg') setTimeout(() => document.getElementById('workBtn')?.click(), 300); });
   if (go === 'today' || go === 'more') setTimeout(() => document.getElementById('workBtn')?.click(), 2500);
   try { const upd = () => { const n = (TASKS || []).filter(t => t.status === 'waiting').length + (QUESTIONS || []).filter(q => q.status === 'open').length; navigator.setAppBadge && (n ? navigator.setAppBadge(n) : navigator.clearAppBadge()); }; setInterval(upd, 15000); } catch (e) { }
+}
+
+/* ---------- messages from the scheduled agents (Vercel app) ---------- */
+if (window.BLOOM_STANDALONE) {
+  const mb = document.getElementById('msgBtn'), mc = document.getElementById('msgCard'), ml = document.getElementById('msgList'); mb.hidden = false;
+  let MSGS = [];
+  const showMsgs = () => { ml.innerHTML = ''; if (!MSGS.length) { ml.append(el('div', 'empty', 'No messages yet. Your agents post here when they run.')); return; }
+    for (const m of MSGS.slice(0, 40)) { const d = new Date(m.createdAt); const w = el('div', 'witem'); w.append(el('b', null, (m.name || 'Your team') + (m.read ? '' : ' • new')), el('div', 'meta', isNaN(d) ? '' : d.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Accra' })), Object.assign(el('div', null, m.text || ''), { style: 'white-space:pre-wrap' })); ml.append(w); } };
+  const openMsgs = () => { mc.hidden = false; showMsgs(); for (const m of MSGS.filter(x => !x.read)) store.doc('messages/' + m.id).update({ read: true }).catch(() => { }); };
+  mb.addEventListener('click', () => { document.getElementById('moreMenu').hidden = true; mc.hidden ? openMsgs() : (mc.hidden = true); });
+  document.getElementById('closeMsg').addEventListener('click', () => { mc.hidden = true; });
+  (async () => { for (let i = 0; i < 40 && !store; i++) await new Promise(r => setTimeout(r, 250)); if (!store) return;
+    store.collection('messages').orderBy('createdAt', 'desc').limit(60).onSnapshot(s => { MSGS = s.docs.map(d => Object.assign({ id: d.id }, d.data())); const n = MSGS.filter(m => !m.read).length; mb.textContent = n ? `Messages (${n})` : 'Messages'; if (!mc.hidden) showMsgs(); }, () => { });
+    if ((location.hash || '') === '#msg') openMsgs(); })();
+  if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open === 'msg') openMsgs(); });
 }
 </script>
 
