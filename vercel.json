@@ -57,22 +57,6 @@
   {
    "path": "/api/cron?job=tools",
    "schedule": "23 18 * * 1,4"
-  },
-  {
-   "path": "/api/cron?job=brief",
-   "schedule": "47 7 * * *"
-  },
-  {
-   "path": "/api/cron?job=evening",
-   "schedule": "15 22 * * *"
-  },
-  {
-   "path": "/api/cron?job=thursday",
-   "schedule": "47 15 * * 4"
-  },
-  {
-   "path": "/api/cron?job=money",
-   "schedule": "11 9 1 * *"
   }
  ],
  "functions": {
