@@ -1,14 +1,18 @@
 {
-  "id": "/",
+  "id": "/?app=bloom",
   "name": "Bloom Village",
-  "short_name": "Bloom Village",
+  "short_name": "Bloom",
   "description": "Joanita's village of AI agents",
-  "start_url": "/",
+  "start_url": "/?app=bloom",
   "scope": "/",
   "display": "standalone",
-  "orientation": "any",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "portrait",
   "background_color": "#bfe3f2",
   "theme_color": "#7b2d42",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icon-192.png",
