@@ -172,4 +172,23 @@
   /* ---------- PWA ---------- */
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => { });
   addEventListener('beforeinstallprompt', e => { e.preventDefault(); window.__bip = e; window.dispatchEvent(new Event('bloom-installable')); });
+  /* Download button: shows in the browser (not once installed) */
+  (function () {
+    const inApp = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    if (inApp) return;
+    const show = () => {
+      if (document.getElementById('bvDl')) return;
+      const b = document.createElement('button'); b.id = 'bvDl'; b.textContent = '⬇ Download app';
+      b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 10px);z-index:98;font:700 14px Figtree,system-ui,sans-serif;padding:10px 18px;border:0;border-radius:999px;background:#7b2d42;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+      b.onclick = async () => {
+        if (window.__bip) { window.__bip.prompt(); const r = await window.__bip.userChoice.catch(() => ({})); if (r.outcome === 'accepted') b.remove(); window.__bip = null; return; }
+        const sam = /SamsungBrowser/i.test(navigator.userAgent);
+        alertBox(sam ? 'Tap ⋮ at the bottom right, then "Add page to", then "Apps screen". Bloom installs as an app in your app drawer.' : 'Tap ⋮ at the top right, then "Install app".');
+      };
+      document.body.appendChild(b);
+    };
+    function alertBox(t) { const d = document.createElement('div'); d.style.cssText = 'position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:rgba(0,0,0,.5);padding:16px'; d.innerHTML = '<div style="background:#fffbf4;border-radius:16px;padding:20px;max-width:320px;font:15px/1.45 Figtree,system-ui;color:#2a2421"><b>Download Bloom</b><p>' + t + '</p><button style="font:700 14px system-ui;padding:9px 16px;border:0;border-radius:10px;background:#7b2d42;color:#fff">OK</button></div>'; d.onclick = () => d.remove(); document.body.appendChild(d); }
+    if (document.readyState === 'loading') addEventListener('DOMContentLoaded', show); else show();
+    addEventListener('appinstalled', () => document.getElementById('bvDl')?.remove());
+  })();
 })();
