@@ -3193,6 +3193,12 @@ if (window.BLOOM_STANDALONE) {
       toast(r && r.ok ? 'Phone alerts are on. A test alert is on its way.' : 'Phone alerts are on.');
     } catch (e) { toast('Could not turn on alerts on this device.'); }
   });
+  if ('Notification' in window && Notification.permission !== 'granted') {
+    const bell = document.createElement('button'); bell.id = 'bvBell'; bell.textContent = '🔔 Turn on alerts';
+    bell.style.cssText = 'position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 110px);z-index:97;font:700 13px Figtree,system-ui,sans-serif;padding:10px 14px;border:0;border-radius:999px;background:#c99a2e;color:#2a2421;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+    bell.onclick = () => { pb.click(); setTimeout(() => { if (Notification.permission === 'granted') bell.remove(); }, 4000); };
+    document.body.appendChild(bell);
+  }
   const go = (location.hash || '').slice(1);
   if (navigator.serviceWorker) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open && e.data.open !== 'msg') setTimeout(() => document.getElementById('workBtn')?.click(), 300); });
   if (go === 'today' || go === 'more') setTimeout(() => document.getElementById('workBtn')?.click(), 2500);
