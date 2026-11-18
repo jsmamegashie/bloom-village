@@ -1,6 +1,6 @@
 import { checkPass, rpc } from './_auth.js';
 export const config = { maxDuration: 60 };
-const MODELS = { quick: 'claude-haiku-5-5', default: 'claude-sonnet-5-5' };
+const MODELS = { quick: 'claude-haiku-5-5', default: 'claude-haiku-5-5' };
 // US$ per million tokens: input, output (estimate for the usage counter)
 const PRICE = { 'claude-haiku-5-5': [1, 5], 'claude-sonnet-5-5': [3, 15] };
 
